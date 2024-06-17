@@ -10,38 +10,51 @@ terraform {
 provider "aws" {
     region  = "us-east-1"
 }
-resource "aws_amplify_app" "example" {
-  name       = "example"
-  repository = "https://github.com/example/app"
-
+variable "REPO" {
+  type = string
+}
+variable "TOKEN" {
+  type = string
+}
+resource "aws_amplify_app" "terraform_website" {
+  name       = "terraform_website"
+  repository = var.REPO
+  access_token = var.TOKEN
+  platform = "WEB_COMPUTE"
   # The default build_spec added by the Amplify Console for React.
   build_spec = <<-EOT
-    version: 0.1
+    version: 1
     frontend:
       phases:
         preBuild:
           commands:
-            - yarn install
+            - npm ci --cache .npm --prefer-offline
         build:
           commands:
-            - yarn run build
+            - npm run build
       artifacts:
-        baseDirectory: build
+        baseDirectory: .next
         files:
           - '**/*'
       cache:
         paths:
-          - node_modules/**/*
+          - .next/cache/**/*
+          - .npm/**/*
   EOT
 
   # The default rewrites and redirects added by the Amplify Console.
-  custom_rule {
-    source = "/<*>"
-    status = "404"
-    target = "/index.html"
-  }
 
-  environment_variables = {
-    ENV = "test"
-  }
+}
+resource "aws_amplify_branch" "main" {
+  app_id      = aws_amplify_app.terraform_website.id
+  branch_name = "main"
+
+  framework = "Next.js - SSR"
+  stage     = "PRODUCTION"
+}
+
+resource "aws_amplify_webhook" "main" {
+  app_id      = aws_amplify_app.terraform_website.id
+  branch_name = aws_amplify_branch.main.branch_name
+  description = "triggermaster"
 }
