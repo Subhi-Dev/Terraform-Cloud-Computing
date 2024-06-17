@@ -10,7 +10,8 @@ This is a [Next.js](https://nextjs.org/) project with a Terraform script to depl
 ## Getting Started
 
 First, fork this repository to your Github account
-next, clone the code and run the following commands in the main directory, and substitute the variables with your real values
+
+Next, clone the code and run the following commands in the main directory, and substitute the variables with your real values
 ```bash
 export TF_VAR_REPO=Github Repo URL # Might be SET if you are on windows
 export TF_VAR_TOKEN=Github Personal Token
