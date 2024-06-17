@@ -17,3 +17,5 @@ export TF_VAR_TOKEN=Github Personal Token
 terraform apply
 ```
 WARNING: Make sure your Personal Access Token Doesn't make it to the public repository, avoid pushing any sensitive tokens.
+
+NOTE: The AWS Amplify Dashboard will show a warning "Update required", which is an option to update to the Github app instead of the token which isn't supported in terraform. Otherwise your app will continue to function normally.
